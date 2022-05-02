@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="" content="">
+		<title>Ninja's Slash</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+		<style type="text/css" media="all">
+			canvas
+			{
+				border: .1px solid black;
+			}
+			body
+			{
+				background: black;
+				display: flex;
+				position: relative;
+				justify-content: center;
+				align-items: center;
+				font-family: 'Lobster Two', cursive;
+			}
+			button
+			{
+				position: absolute;
+				left: 80px;
+				border-radius: 500px;
+				text-align: center;
+				width: 60px;
+				height: 60px;
+				bottom: 15px;
+				font-size: 1.2rem;
+				font-weight: bold;
+				border: 2px solid #ffffff0;
+				color: #ffffff0;
+				background-color: #35343400;
+				display:none;
+			}
+			#left-run-btn
+			{
+				left: 15px;
+			}
+			
+			#jump-btn
+			{
+				position: absolute;
+				left: 85%;
+				bottom: 10px;
+			}
+			
+			#player-attack-btn
+			{
+				position: absolute;
+				left: 88%;
+				bottom: 75px;
+				width: 50px;
+				height: 50px;
+			}
+			
+			#background-canvas
+			{
+				position: absolute;
+				background-color: white;
+				z-index: -1;
+			}
+			
+			.game-menu
+			{
+				width: 70%;
+				height: 80%;
+				background-image: url('./img/Menu background.png') ;
+				background-repeat: no-repeat;
+				background-size: cover;
+				z-index: 40;
+				position: absolute;
+				border: 10px solid #409032;
+				border-radius: 15px;
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				align-items: center;
+				
+				
+			}
+			
+			.menu-content
+			{
+				width: 50%;
+				height: 95%;
+				display: flex;
+				align-items: center;
+				justify-content: space-evenly;
+				flex-direction: column;
+				color: #409032;
+				font-weight: bold;
+				
+				text-shadow: 0 0 3px black, 0 0 5px black; 
+			}	
+			
+			.start-btn
+			{
+				width: 80%;
+				height: 40px;
+				border: 5px solid #114d06;
+				background-color: #542E2AFF;
+				border-radius: 6px;
+				font-size:1.25rem;
+				position: static;
+				color: #409032;
+				display: inline;
+				box-shadow: 2px 2px 5px black;
+				text-shadow:  0 0 3px black, 0 0 5px black;
+			}
+			
+			.Title
+			{
+				font-size: 2.5rem;
+				text-decoration: underline;
+				color: #409032;
+				text-shadow: 0 0 3px black, 0 0 3px black;
+				
+			}
+			
+			.Time-record
+			{
+				font-size: 2rem;
+				justify-self: center
+			}
+			.record-unit
+			{
+				font-size: 1rem;
+			}
+			
+			.Last-record-header
+			{
+				font-size: 1rem;
+			}
+			
+			.score
+			{
+				text-align: center;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				align-items: center;
+				justify-items: end;
+				
+				
+			}
+			
+			.Score-display
+			{
+				position: absolute;
+				right: 50px;
+				top: 5px;
+				font-family: Sans-Serif;
+				font-size: 1rem;
+				color: black;
+				font-weight: bold;
+				display: none;
+			}
+		</style>
+		<script src="https://kit.fontawesome.com/885a79ff96.js" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<canvas id="main-canvas"></canvas>
+		<canvas id="background-canvas"></canvas>
+		
+		<button id="right-run-btn"><i class="bi bi-chevron-double-right"></i></button>
+		<button id="left-run-btn"><i class="bi bi-chevron-double-left"></i></button>
+		<button id="jump-btn"><i class="bi bi-chevron-double-up"></i></button>
+		<button id="player-attack-btn"><i class="fab fa-affiliatetheme"></i></button>
+		
+		<div class="game-menu" id="game-start-menu">
+			<div class="Title">
+				Ninja's Slash
+			</div>
+			<div class="menu-content">
+				<div class="score">
+					<span class="Last-record-header"> Your last record: </span>
+					<span class="Time-record"><span id="start-last-record">36</span><span class="record-unit">Sec</span></span>
+				</div>
+				<button class="start-btn">Start Game</button>
+				<span class="instruction">Kill all the enemy's to win.</span>
+			</div>
+		</div>
+		
+		<div class="Score-display">
+			Time: <span class="player-time">0</span> sec
+		</div>
+		
+		<div class="game-menu" id="game-over-menu" style="display: none;">
+			<div class="Title">
+				Game Over
+			</div>
+			<div class='menu-content'>
+				<div class="score">
+					<span class="Last-record-header"> Your record: </span>
+					<span class="Time-record"><span id="game-over-last-record">36</span><span class="record-unit">Sec</span></span>
+				</div>
+				<button class="start-btn">Restart Game</button>
+			</div>
+		</div>
+		
+		<div class="game-menu" id="game-win-menu" style="display: none;">
+			<div class="Title">
+				You Won !!
+			</div>
+			<div class="menu-content">
+				<div class="score">
+					<span class="Last-record-header"> Your record: </span>
+					<span class="Time-record"><span id="win-last-record">36</span><span class="record-unit">Sec</span></span>
+				</div>
+				<button class="start-btn">Restart Game</button>
+			</div>
+		</div>
+		
+		<script src="index.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>
